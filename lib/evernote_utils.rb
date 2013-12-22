@@ -2,7 +2,7 @@ require "evernote_utils/version"
 
 require 'evernote-thrift'
 
-module EvernoteUtils
+module ENUtils
   class InvalidVersion < StandardError; end
 
   class Core

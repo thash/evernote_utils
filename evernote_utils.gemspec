@@ -5,7 +5,7 @@ require 'evernote_utils/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "evernote_utils"
-  spec.version       = EvernoteUtils::VERSION
+  spec.version       = ENUtils::VERSION
   spec.authors       = ["memerelics"]
   spec.email         = ["takuya21hashimoto@gmail.com"]
   spec.description   = %q{simple wrapper for evernote api}
