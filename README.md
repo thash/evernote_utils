@@ -22,7 +22,7 @@ Or install it yourself as:
 
 If you don't have your Evernote API Key yet, get it from [Evernote Developers Page](http://dev.evernote.com/doc/).
 
-Note that you should send "Activation Request" to access productionn data. Please check [Frequently Ask Questions - Evernote Developers](http://dev.evernote.com/support/faq.php#activatekey).
+Note that you should send "Activation Request" to access production data. Please check [Frequently Ask Questions - Evernote Developers](http://dev.evernote.com/support/faq.php#activatekey).
 
 Then authenticate user's Evernote account via OAuth. Instruction is here: [Getting Started with the Evernote API - Evernote Developers](http://dev.evernote.com/doc/start/ruby.php)
 
