@@ -37,10 +37,12 @@ EvenoteUtils don't support authentication feature, because dominant other option
 
 First, initialize ENUtils with an OAuth token credential identifier.
 
-    enutils = ENUtils::Core.new('oauth-token-credential-identifier')
+```ruby
+enutils = ENUtils::Core.new('oauth-token-credential-identifier')
 
-    # If you use sandbox token, pass 2nd argument false.
-    enutils = ENUtils::Core.new('oauth-token-credential-identifier', false)
+# If you use sandbox token, pass 2nd argument false.
+enutils = ENUtils::Core.new('oauth-token-credential-identifier', false)
+```
 
 OAuth token credential identifier looks something like:
 
@@ -48,11 +50,15 @@ OAuth token credential identifier looks something like:
 
 Then you can access Evernote resources.
 
-    enutils.notes(words: 'Clojure', limit: 5, order: :updated)
+```ruby
+enutils.notes(words: 'Clojure', limit: 5, order: :updated)
+```
 
 It returns `ENUtils::NoteList` instances. You can know total count of search result by calling `ENUtils::NoteList#total_count`
 
-    enutils.notes(words: 'Clojure', limit: 5, order: :updated).total_count #=> 150
+```ruby
+enutils.notes(words: 'Clojure', limit: 5, order: :updated).total_count #=> 150
+```
 
 `ENUtils::NoteList` is a collection of `ENUtils::Note`. `ENUtils::Note` is a thin wrapper of `Evernote::EDAM::Type::Note`.
 
@@ -69,18 +75,21 @@ And here, `ENUtils#notes` accepts following options:
 
 `ENUtils#notebooks` and `ENUtils#tags` accept name filtering. You can use String or Regexp.
 
-    enutils.notebooks(name: 'Twitter')
-    enutils.tags(name: /ruby/i)
+```ruby
+enutils.notebooks(name: 'Twitter')
+enutils.tags(name: /ruby/i)
+```
 
 These methods return array of `ENUtils::Notebook` and `ENUtils::Tag` respectively, which available to filter notes.
 
-    notebook = enutils.notebooks(name: /Book/).first
-    tag      = enutils.tags(name: 'language').first
-    enutils.notes(notebook: notebook, tag: tag)
+```ruby
+notebook = enutils.notebooks(name: /Book/).first
+tag      = enutils.tags(name: 'language').first
+enutils.notes(notebook: notebook, tag: tag)
 
-    # or, you can use multiple tags
-    enutils.notes(notebook: notebook, tags: [tagA, tagB, tagC])
-
+# or, you can use multiple tags
+enutils.notes(notebook: notebook, tags: [tagA, tagB, tagC])
+```
 
 ## Planning to do
 
