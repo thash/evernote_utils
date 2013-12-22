@@ -41,8 +41,10 @@ module ENUtils
 
     def self.build_filter(options={})
       filter = Evernote::EDAM::NoteStore::NoteFilter.new
-      # if options[:notebook]
-      # end
+      if (notebook = options[:notebook])
+        notebook_guid = notebook.is_a?(ENUtils::Notebook) ? notebook.guid : notebook
+        filter.notebookGuid = notebook_guid
+      end
       # if options[:tag]
       # end
       filter

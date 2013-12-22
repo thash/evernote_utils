@@ -2,6 +2,7 @@ require "evernote_utils/version"
 
 require 'evernote-thrift'
 require "evernote_utils/note"
+require "evernote_utils/notebook"
 
 module ENUtils
   class InvalidVersion < StandardError; end
@@ -32,6 +33,10 @@ module ENUtils
 
     def notes(options={})
       Note.where(self, options)
+    end
+
+    def notebooks(options={})
+      Notebook.where(self, options)
     end
 
   end
