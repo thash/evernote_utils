@@ -70,8 +70,8 @@ And here, `ENUtils#notes` accepts following options:
 * words (fulltext search api)
 * order (`:created, :updated, :relevance, :update_sequence_number, :title`)
 * asc (true/false)
-* offset (default is 0)
-* limit (default is 10)
+* offset (default 0)
+* limit (default 10, max 50 (due to Evernote API restriction))
 
 `ENUtils#notebooks` and `ENUtils#tags` accept name filtering. You can use String or Regexp.
 

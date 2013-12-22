@@ -19,8 +19,11 @@ module ENUtils
     #   attributes:<Evernote::EDAM::Type::NoteAttributes >
 
     attr_reader :guid, :title, :contentHash, :contentLength, :created, :updated, :active, :updateSequenceNum, :notebookGuid, :attributes
+    attr_accessor :content
 
-    def initialize(edam_note)
+    def initialize(core, edam_note)
+       @core              = core
+
        @guid              = edam_note.guid
        @title             = edam_note.title
        @contentHash       = edam_note.contentHash
@@ -36,8 +39,13 @@ module ENUtils
     def self.where(core, options={})
       offset = options.delete(:offset) || 0
       limit  = options.delete(:limit)  || DEFAULT_LIMIT
-      result = core.notestore.findNotes(core.token, NoteFilter.build(options), offset, limit).notes.map{|n| new(n) }
+      result = core.notestore.findNotes(core.token, NoteFilter.build(options), offset, limit).notes.map{|n| new(core, n) }
       NoteList.new(core, result, options)
+    end
+
+    def set_content!
+      # getNote(token, guid, withContent, withResourcesData, withResourcesRecognition, withResourcesAlternateData)
+      @content = @core.notestore.getNote(@core.token, guid, true, false, false, false).content
     end
 
   end
