@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency 'evernote-thrift', '~>1.25.1'
-  spec.add_dependency 'activesupport', '~>4.0.2'
+  spec.add_dependency 'activesupport', '~>3.2.13'
 
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"
