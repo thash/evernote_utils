@@ -1,6 +1,7 @@
 require "evernote_utils/version"
 
 require 'evernote-thrift'
+require "evernote_utils/note"
 
 module ENUtils
   class InvalidVersion < StandardError; end
@@ -27,6 +28,10 @@ module ENUtils
       @notestore = Evernote::EDAM::NoteStore::NoteStore::Client.new(noteStoreProtocol)
 
       @token = token
+    end
+
+    def notes(options={})
+      Note.where(self, options)
     end
 
   end
