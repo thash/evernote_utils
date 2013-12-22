@@ -1,6 +1,5 @@
 require 'active_support/core_ext/object'
-require "evernote_utils/array"
-require "evernote_utils/filter"
+require "evernote_utils/notelist"
 
 module ENUtils
   class Note < Evernote::EDAM::Type::Note
