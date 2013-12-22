@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = ENUtils::VERSION
   spec.authors       = ["memerelics"]
   spec.email         = ["takuya21hashimoto@gmail.com"]
-  spec.description   = %q{simple wrapper for evernote api}
-  spec.summary       = %q{simple wrapper for evernote api}
+  spec.description   = %q{A thin OOP-friendly wrapper of Evernote Ruby SDK.}
+  spec.summary       = %q{A thin OOP-friendly wrapper of Evernote Ruby SDK.}
   spec.homepage      = ""
   spec.license       = "MIT"
 

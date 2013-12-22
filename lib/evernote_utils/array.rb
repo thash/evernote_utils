@@ -1,0 +1,23 @@
+require "evernote_utils/filter"
+
+module ENUtils
+  class NoteList < Array
+
+    attr_reader :core, :options
+
+    def initialize(core, array, options={})
+      @core    = core
+      @options = options
+      super(array)
+    end
+
+    # findNoteCounts returns
+    #   Evernote::EDAM::NoteStore::NoteCollectionCounts
+    #     notebookCounts:{"xxxxxxxx-...xxx": 10, ...},
+    #     tagCounts:{"xxxxxx-...xxxx": 1, ..."}
+    def total_count
+      counts = core.notestore.findNoteCounts(core.token, NoteFilter.build(options), false)
+      counts.notebookCounts.reduce(0){|sum, pair| sum += pair.last }
+    end
+  end
+end

@@ -1,4 +1,6 @@
 require 'active_support/core_ext/object'
+require "evernote_utils/array"
+require "evernote_utils/filter"
 
 module ENUtils
   class Note < Evernote::EDAM::Type::Note
@@ -19,11 +21,6 @@ module ENUtils
 
     attr_reader :guid, :title, :contentHash, :contentLength, :created, :updated, :active, :updateSequenceNum, :notebookGuid, :attributes
 
-    # created: 1, updated: 2, relevance: 3, update_sequence_number: 4, title: 5
-    OrderFields = Evernote::EDAM::Type::NoteSortOrder::VALUE_MAP.reduce({}){|accum, pair|
-      accum.merge(pair.last.downcase.to_sym => pair.first)
-    }
-
     def initialize(edam_note)
        @guid              = edam_note.guid
        @title             = edam_note.title
@@ -40,31 +37,8 @@ module ENUtils
     def self.where(core, options={})
       offset = options.delete(:offset) || 0
       limit  = options.delete(:limit)  || DEFAULT_LIMIT
-      core.notestore.findNotes(core.token, build_filter(options), offset, limit)
-        .notes.map{|n| new(n) }
-    end
-
-    private
-
-    def self.build_filter(options={})
-      filter = Evernote::EDAM::NoteStore::NoteFilter.new
-      if (notebook = options[:notebook])
-        notebook_guid = notebook.is_a?(ENUtils::Notebook) ? notebook.guid : notebook
-        filter.notebookGuid = notebook_guid
-      end
-      if (tags = options[:tags]) || (tag = options[:tag])
-        tag_guids = (tags || [tag]).map{|t| t.is_a?(ENUtils::Tag) ? t.guid : t }
-        filter.tagGuids = tag_guids
-      end
-      filter.words     = options[:words] if options[:words]
-      filter.order     = OrderFields[options[:order].to_sym] if available_order?(options[:order])
-      filter.ascending = options[:asc] if options[:asc]
-      filter
-    end
-
-    def self.available_order?(value)
-      return false if value.nil?
-      OrderFields.keys.include?(value.to_sym)
+      result = core.notestore.findNotes(core.token, NoteFilter.build(options), offset, limit).notes.map{|n| new(n) }
+      NoteList.new(core, result, options)
     end
 
   end

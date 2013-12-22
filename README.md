@@ -50,7 +50,12 @@ Then you can access Evernote resources.
 
     enutils.notes(words: 'Clojure', limit: 5, order: :updated)
 
-It returns `ENUtils::Note` instances. `ENUtils::Note` is a thin wrapper of `Evernote::EDAM::Type::Tag`.
+It returns `ENUtils::NoteList` instances. You can know total count of search result by calling `ENUtils::NoteList#total_count`
+
+    enutils.notes(words: 'Clojure', limit: 5, order: :updated).total_count #=> 150
+
+`ENUtils::NoteList` is a collection of `ENUtils::Note`. `ENUtils::Note` is a thin wrapper of `Evernote::EDAM::Type::Note`.
+
 
 And here, `ENUtils#notes` accepts following options:
 
@@ -80,7 +85,6 @@ These methods return array of `ENUtils::Notebook` and `ENUtils::Tag` respectivel
 ## Planning to do
 
 * relationships: notebook.notes, note.tags, tag.notes
-* counting result notes
 
 
 ## Contributing
