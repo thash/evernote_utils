@@ -3,6 +3,7 @@ require "evernote_utils/version"
 require 'evernote-thrift'
 require "evernote_utils/note"
 require "evernote_utils/notebook"
+require "evernote_utils/tag"
 
 module ENUtils
   class InvalidVersion < StandardError; end
@@ -39,5 +40,8 @@ module ENUtils
       Notebook.where(self, options)
     end
 
+    def tags(options={})
+      Tag.where(self, options)
+    end
   end
 end

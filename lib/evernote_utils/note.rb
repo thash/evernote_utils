@@ -45,8 +45,10 @@ module ENUtils
         notebook_guid = notebook.is_a?(ENUtils::Notebook) ? notebook.guid : notebook
         filter.notebookGuid = notebook_guid
       end
-      # if options[:tag]
-      # end
+      if (tags = options[:tags]) || (tag = options[:tag])
+        tag_guids = (tags || [tag]).map{|t| t.is_a?(ENUtils::Tag) ? t.guid : t }
+        filter.tagGuids = tag_guids
+      end
       filter
     end
   end
