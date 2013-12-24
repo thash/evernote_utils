@@ -51,19 +51,18 @@ OAuth token credential identifier looks something like:
 Then you can access Evernote resources.
 
 ```ruby
-enutils.notes(words: 'Clojure', limit: 5, order: :updated)
+enutils.notes # => <ENUtils::NoteList ...>
 ```
 
-It returns `ENUtils::NoteList` instances. You can know total count of search result by calling `ENUtils::NoteList#total_count`
+It returns `ENUtils::NoteList` instance. `ENUtils::NoteList` is an enumerable collection of `ENUtils::Note`. `ENUtils::Note` is just a thin wrapper of `Evernote::EDAM::Type::Note`.
+
+You can get total count of search result by calling `ENUtils::NoteList#total_count`
 
 ```ruby
-enutils.notes(words: 'Clojure', limit: 5, order: :updated).total_count #=> 150
+enutils.notes.total_count #=> 15000
 ```
 
-`ENUtils::NoteList` is a collection of `ENUtils::Note`. `ENUtils::Note` is a thin wrapper of `Evernote::EDAM::Type::Note`.
-
-
-And here, `ENUtils#notes` accepts following options:
+Here, `ENUtils#notes` accepts following options to search notes:
 
 * notebook
 * tag, tags
@@ -73,19 +72,35 @@ And here, `ENUtils#notes` accepts following options:
 * offset (default 0)
 * limit (default 10, max 50 (due to Evernote API restriction))
 
+
+```ruby
+enutils.notes(words: 'clojure install', limit: 5, order: :updated)
+
+# Assume that 'inbox' is a ENUtils::Notebook, 'mytag' is a ENUtils::Tag. See below.
+enutils.notes(notebook: inbox, tag: mytag, limit: 10).count #=> 10
+enutils.notes(notebook: inbox, tag: mytag, limit: 10).total_count #=> 210
+```
+
+Actually, 'words' option is flexible enough to search notes by names of notebook and tag, same as official Evernote Desctop application.
+
+```ruby
+# Just passing notebook/tag(s) names to 'words' option would work.
+enutils.notes(words: 'oauth notebook:Blog tag:ruby tag:tips')
+```
+
 `ENUtils#notebooks` and `ENUtils#tags` accept name filtering. You can use String or Regexp.
 
 ```ruby
-enutils.notebooks(name: 'Twitter')
-enutils.tags(name: /ruby/i)
+enutils.notebooks(name: 'Twitter') #=> [<ENUtils::Notebook ...>, ...]
+enutils.tags(name: /ruby/i)        #=> [<ENUtils::Tag ...>, ...]
 ```
 
-These methods return array of `ENUtils::Notebook` and `ENUtils::Tag` respectively, which available to filter notes.
+These methods return an array of `ENUtils::Notebook` and `ENUtils::Tag`, respectively. By passing them `ENUtils::Core#notes` searches notes as described above.
 
 ```ruby
 notebook = enutils.notebooks(name: /Book/).first
 tag      = enutils.tags(name: 'language').first
-enutils.notes(notebook: notebook, tag: tag)
+enutils.notes(notebook: notebook, tag: tag, words: 'beginners\' guide')
 
 # or, you can use multiple tags
 enutils.notes(notebook: notebook, tags: [tagA, tagB, tagC])
