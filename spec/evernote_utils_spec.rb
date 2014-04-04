@@ -1,16 +1,16 @@
 require 'spec_helper'
 
-describe EvernoteUtils::Core do
+describe ENUtils::Core do
   before do
-    Thrift::HTTPClientTransport.stubs(new: nil)
-    Thrift::BinaryProtocol.stubs(new: nil)
+    allow(Thrift::HTTPClientTransport).to receive(:new) { nil }
+    allow(Thrift::BinaryProtocol).to receive(:new) { nil }
 
-    us = mock('Evernote::EDAM::UserStore::UserStore::Client')
-    Evernote::EDAM::UserStore::UserStore::Client.stubs(new: us)
-    us.stubs(checkVersion: true,
-             getNoteStoreUrl: 'http://note_store_url/')
+    us = double('Evernote::EDAM::UserStore::UserStore::Client')
+    allow(Evernote::EDAM::UserStore::UserStore::Client).to receive(:new) { us }
+    allow(us).to receive_messages(checkVersion: true,
+                                  getNoteStoreUrl: 'http://note_store_url/')
   end
   it {
-    EvernoteUtils::Core.new('dummy_token').must_be_instance_of EvernoteUtils::Core
+    expect(ENUtils::Core.new('dummy_token')).to be_instance_of(ENUtils::Core)
   }
 end
