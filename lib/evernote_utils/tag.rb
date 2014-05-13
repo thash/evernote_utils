@@ -13,6 +13,16 @@ module ENUtils
       @updateSequenceNum = edam_tag.updateSequenceNum
     end
 
+    def self.find_by_guid(core, guid)
+      tag = core.notestore.listTags(core.token).find{|t| t.guid == guid }
+      tag.present? ? new(tag) : nil
+    end
+
+    def self.find_by_name(core, name)
+      tag = core.notestore.listTags(core.token).find{|t| t.name.downcase == name.downcase }
+      tag.present? ? new(tag) : nil
+    end
+
     def self.where(core, options={})
       tags = core.notestore.listTags(core.token).map{|t| new(t) }
       return tags if options.empty?

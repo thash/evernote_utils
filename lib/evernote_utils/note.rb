@@ -18,7 +18,7 @@ module ENUtils
     #   notebookGuid:"4xxxxxda-xxxx-xxxx-xxxx-zzzzzzzzzzzz"
     #   attributes:<Evernote::EDAM::Type::NoteAttributes >
 
-    attr_reader :guid, :title, :contentHash, :contentLength, :created, :updated, :active, :updateSequenceNum, :notebookGuid, :attributes
+    attr_reader :guid, :title, :contentHash, :contentLength, :created, :updated, :active, :updateSequenceNum, :notebookGuid, :tagGuids, :attributes
     attr_accessor :content
 
     def initialize(core, edam_note)
@@ -33,20 +33,29 @@ module ENUtils
        @active            = edam_note.active
        @updateSequenceNum = edam_note.updateSequenceNum
        @notebookGuid      = edam_note.notebookGuid
+       @tagGuids          = edam_note.tagGuids
        @attributes        = edam_note.attributes
     end
 
     def self.where(core, options={})
       offset = options.delete(:offset) || 0
       limit  = options.delete(:limit)  || DEFAULT_LIMIT
-      result = core.notestore.findNotes(core.token, NoteFilter.build(options), offset, limit).notes.map{|n| new(core, n) }
+      result = core.notestore.findNotes(core.token, NoteFilter.build(core, options), offset, limit).notes.map{|n| new(core, n) }
       NoteList.new(core, result, options)
     end
 
     def set_content!
       # getNote(token, guid, withContent, withResourcesData, withResourcesRecognition, withResourcesAlternateData)
-      @content = @core.notestore.getNote(@core.token, guid, true, false, false, false).content
+      @content ||= @core.notestore.getNote(@core.token, guid, true, false, false, false).content
     end
 
+    def notebook
+      @notebook ||= Notebook.find_by_guid(@core, notebookGuid)
+    end
+
+    def tags
+      return nil unless tagGuids
+      @tags ||= tagGuids.map{|guid| Tag.find_by_guid(@core, guid) }.compact
+    end
   end
 end

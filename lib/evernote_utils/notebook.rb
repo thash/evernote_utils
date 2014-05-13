@@ -22,12 +22,22 @@ module ENUtils
       @restrictions      = edam_notebook.restrictions
     end
 
+    def self.find_by_guid(core, guid)
+      notebook = core.notestore.listNotebooks(core.token).find{|nb| nb.guid == guid }
+      notebook.present? ? new(notebook) : nil
+    end
+
+    def self.find_by_name(core, name)
+      notebook = core.notestore.listNotebooks(core.token).find{|nb| nb.name.downcase == name.downcase }
+      notebook.present? ? new(notebook) : nil
+    end
+
     def self.where(core, options={})
       notebooks = core.notestore.listNotebooks(core.token).map{|nb| new(nb) }
       return notebooks if options.empty?
       case options[:name]
       when String
-        notebooks.select{|nb| options[:name] == nb.name }
+        notebooks.select{|nb| options[:name].downcase == nb.name.downcase }
       when Regexp
         notebooks.select{|nb| options[:name] =~ nb.name }
       else

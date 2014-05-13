@@ -8,6 +8,8 @@ require "evernote_utils/tag"
 module ENUtils
   class InvalidVersion < StandardError; end
 
+  GUID_REGEXP = /\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/
+
   class Core
     attr_accessor :token, :notestore
 

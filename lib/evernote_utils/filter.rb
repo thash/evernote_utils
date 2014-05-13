@@ -6,25 +6,44 @@ module ENUtils
       accum.merge(pair.last.downcase.to_sym => pair.first)
     }
 
-    def self.build(options={})
+    def self.build(core, o={})
       filter = Evernote::EDAM::NoteStore::NoteFilter.new
-      if (notebook = options[:notebook])
-        notebook_guid = notebook.is_a?(ENUtils::Notebook) ? notebook.guid : notebook
-        filter.notebookGuid = notebook_guid
-      end
-      if (tags = options[:tags]) || (tag = options[:tag])
-        tag_guids = (tags || [tag]).map{|t| t.is_a?(ENUtils::Tag) ? t.guid : t }
-        filter.tagGuids = tag_guids
-      end
-      filter.words     = options[:words] if options[:words]
-      filter.order     = OrderFields[options[:order].to_sym] if available_order?(options[:order])
-      filter.ascending = options[:asc] if options[:asc]
+      filter.notebookGuid = notebook_guid(core, o[:notebook]) if o[:notebook]
+      filter.tagGuids  = tag_guids(core, tag: o[:tag], tags: o[:tags]) if o[:tag] || o[:tags]
+      filter.words     = o[:words] if o[:words]
+      filter.order     = OrderFields[o[:order].to_sym] if available_order?(o[:order])
+      filter.ascending = o[:asc] if o[:asc]
       filter
     end
 
     def self.available_order?(value)
       return false if value.nil?
       OrderFields.keys.include?(value.to_sym)
+    end
+
+    private
+
+    def self.notebook_guid(core, notebook)
+      if notebook.is_a?(ENUtils::Notebook)
+        notebook.guid
+      elsif ENUtils::GUID_REGEXP =~ notebook
+        notebook
+      else
+        Notebook.find_by_name(core, notebook).try(:guid)
+      end
+    end
+
+    def self.tag_guids(core, tag: nil, tags: nil)
+      search_tags = (tags || []) + [tag]
+      search_tags.compact.map do |t|
+        if t.is_a?(ENUtils::Tag)
+          t.guid
+        elsif ENUtils::GUID_REGEXP =~ t
+          t
+        else
+          Tag.find_by_name(core, t).try(:guid)
+        end
+      end.compact
     end
 
   end

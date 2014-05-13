@@ -40,13 +40,15 @@ First, initialize ENUtils with an OAuth token credential identifier.
 ```ruby
 enutils = ENUtils::Core.new('oauth-token-credential-identifier')
 
-# If you use sandbox token, pass 2nd argument false.
+# If you want to work on sandbox, pass false to a 2nd argument.
 enutils = ENUtils::Core.new('oauth-token-credential-identifier', false)
 ```
 
 OAuth token credential identifier looks something like:
 
-    S=s4:U=a1:E=12bfd68c6b6:C=12bf8426ab8:P=7:A=en_oauth_test:H=3df9cf6c0d7bc410824c80231e64dbe1
+```
+S=s4:U=a1:E=12bfzzzzzz6:C=12bf8426ab8:P=7:A=en_oauth_test:H=3df9cf6xxxxxxxxx824c802xxxxxdbe1
+```
 
 Then you can access Evernote resources.
 
@@ -55,12 +57,6 @@ enutils.notes # => <ENUtils::NoteList ...>
 ```
 
 It returns `ENUtils::NoteList` instance. `ENUtils::NoteList` is an enumerable collection of `ENUtils::Note`. `ENUtils::Note` is just a thin wrapper of `Evernote::EDAM::Type::Note`.
-
-You can get total count of search result by calling `ENUtils::NoteList#total_count`
-
-```ruby
-enutils.notes.total_count #=> 15000
-```
 
 Here, `ENUtils#notes` accepts following options to search notes:
 
@@ -74,11 +70,23 @@ Here, `ENUtils#notes` accepts following options to search notes:
 
 
 ```ruby
-enutils.notes(words: 'clojure install', limit: 5, order: :updated)
+# Search notes by free words.
+enutils.notes(words: 'clojure install')
 
-# Assume that 'inbox' is a ENUtils::Notebook, 'mytag' is a ENUtils::Tag. See below.
-enutils.notes(notebook: inbox, tag: mytag, limit: 10).count #=> 10
-enutils.notes(notebook: inbox, tag: mytag, limit: 10).total_count #=> 210
+# Search notes by notebook and tag names.
+result = enutils.notes(notebook: 'inbox', tag: 'mytag')
+
+result.count       #=> 10  ... 'result' contains 10 notes for now.
+result.total_count #=> 210 ... How many results EverNote has on your account.
+
+# 10 is default search limit. You can overwrite limit by passing option 'limit'. 
+enutils.notes(notebook: 'inbox', tag: 'mytag', limit: 50)
+
+# Sorting result whould be nice.
+enutils.notes(tag: 'mytag', order: :updated, asc: false)
+
+# BTW 'tags' option also available to search by multiple tags. Pass an array of tags to it.
+enutils.notes(tags: ['java', 'clojure'])
 ```
 
 Actually, 'words' option is flexible enough to search notes by names of notebook and tag, same as official Evernote Desctop application.
@@ -98,23 +106,12 @@ enutils.tags(name: /ruby/i)        #=> [<ENUtils::Tag ...>, ...]
 These methods return an array of `ENUtils::Notebook` and `ENUtils::Tag`, respectively. By passing them `ENUtils::Core#notes` searches notes as described above.
 
 ```ruby
+# You can also use instances of ENUtils::Notebook and ENUtils::Tag when searching notes.
 notebook = enutils.notebooks(name: /Book/).first
 tag      = enutils.tags(name: 'language').first
 enutils.notes(notebook: notebook, tag: tag, words: 'beginners\' guide')
-
-# or, you can use multiple tags
-enutils.notes(notebook: notebook, tags: [tagA, tagB, tagC])
 ```
 
 ## Planning to do
 
 * relationships: notebook.notes, note.tags, tag.notes
-
-
-## Contributing
-
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
