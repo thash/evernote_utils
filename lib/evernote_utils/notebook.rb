@@ -12,7 +12,8 @@ module ENUtils
 
       attr_reader :guid, :name, :updateSequenceNum, :defaultNotebook, :serviceCreated, :serviceUpdated, :restrictions
 
-    def initialize(edam_notebook)
+    def initialize(core, edam_notebook)
+      @core              = core
       @guid              = edam_notebook.guid
       @name              = edam_notebook.name
       @updateSequenceNum = edam_notebook.updateSequenceNum
@@ -22,18 +23,22 @@ module ENUtils
       @restrictions      = edam_notebook.restrictions
     end
 
+    def notes(options={})
+      Note.where(@core, options.merge(notebook: self))
+    end
+
     def self.find_by_guid(core, guid)
       notebook = core.notestore.listNotebooks(core.token).find{|nb| nb.guid == guid }
-      notebook.present? ? new(notebook) : nil
+      notebook.present? ? new(core, notebook) : nil
     end
 
     def self.find_by_name(core, name)
       notebook = core.notestore.listNotebooks(core.token).find{|nb| nb.name.downcase == name.downcase }
-      notebook.present? ? new(notebook) : nil
+      notebook.present? ? new(core, notebook) : nil
     end
 
     def self.where(core, options={})
-      notebooks = core.notestore.listNotebooks(core.token).map{|nb| new(nb) }
+      notebooks = core.notestore.listNotebooks(core.token).map{|nb| new(core, nb) }
       return notebooks if options.empty?
       case options[:name]
       when String

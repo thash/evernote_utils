@@ -38,6 +38,11 @@ module ENUtils
       Note.where(self, options)
     end
 
+    def notebook(name=nil)
+      return nil unless name
+      Notebook.find_by_name(self, name)
+    end
+
     def notebooks(options={})
       Notebook.where(self, options)
     end
