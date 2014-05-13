@@ -33,7 +33,7 @@ module ENUtils
     end
 
     def self.find_by_name(core, name)
-      notebook = core.notestore.listNotebooks(core.token).find{|nb| nb.name.downcase == name.downcase }
+      notebook = core.notestore.listNotebooks(core.token).find{|nb| nb.name.downcase == name.to_s.downcase }
       notebook.present? ? new(core, notebook) : nil
     end
 

@@ -47,6 +47,11 @@ module ENUtils
       Notebook.where(self, options)
     end
 
+    def tag(name=nil)
+      return nil unless name
+      Tag.find_by_name(self, name)
+    end
+
     def tags(options={})
       Tag.where(self, options)
     end

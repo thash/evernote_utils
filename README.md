@@ -114,4 +114,4 @@ enutils.notes(notebook: notebook, tag: tag, words: 'beginners\' guide')
 
 ## Planning to do
 
-* relationships: notebook.notes, note.tags, tag.notes
+* update notes
