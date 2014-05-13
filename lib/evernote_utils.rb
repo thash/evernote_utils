@@ -8,6 +8,8 @@ require "evernote_utils/tag"
 module ENUtils
   class InvalidVersion < StandardError; end
 
+  GUID_REGEXP = /\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/
+
   class Core
     attr_accessor :token, :notestore
 
@@ -36,8 +38,18 @@ module ENUtils
       Note.where(self, options)
     end
 
+    def notebook(name=nil)
+      return nil unless name
+      Notebook.find_by_name(self, name)
+    end
+
     def notebooks(options={})
       Notebook.where(self, options)
+    end
+
+    def tag(name=nil)
+      return nil unless name
+      Tag.find_by_name(self, name)
     end
 
     def tags(options={})

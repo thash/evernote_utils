@@ -20,7 +20,7 @@ module ENUtils
     #     notebookCounts:{"xxxxxxxx-...xxx": 10, ...},
     #     tagCounts:{"xxxxxx-...xxxx": 1, ..."}
     def get_total_count
-      counts = core.notestore.findNoteCounts(core.token, NoteFilter.build(options), false)
+      counts = core.notestore.findNoteCounts(core.token, NoteFilter.build(core, options), false)
       counts.notebookCounts.reduce(0){|sum, pair| sum += pair.last }
     end
   end
