@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/memerelics/evernote_utils.svg?branch=master)](https://travis-ci.org/memerelics/evernote_utils)
+[![Coverage Status](https://coveralls.io/repos/memerelics/evernote_utils/badge.png?branch=master)](https://coveralls.io/r/memerelics/evernote_utils?branch=master)
 
 # EvernoteUtils
 
