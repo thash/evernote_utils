@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/memerelics/evernote_utils.svg?branch=master)](https://travis-ci.org/memerelics/evernote_utils)
+
 # EvernoteUtils
 
 A thin OOP-friendly wrapper of Evernote Ruby SDK.
