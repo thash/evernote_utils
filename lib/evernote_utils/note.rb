@@ -1,8 +1,11 @@
 require 'active_support/core_ext/object'
-require "evernote_utils/notelist"
+require 'evernote_utils/notelist'
+
+require 'active_model'
 
 module ENUtils
   class Note < Evernote::EDAM::Type::Note
+    include ActiveModel::Dirty
 
     DEFAULT_LIMIT = 10
 
@@ -19,13 +22,20 @@ module ENUtils
     #   attributes:<Evernote::EDAM::Type::NoteAttributes >
 
     attr_reader :guid, :title, :contentHash, :contentLength, :created, :updated, :active, :updateSequenceNum, :notebookGuid, :tagGuids, :attributes
-    attr_accessor :content
+
+    define_attribute_methods [:title, :content]
 
     def initialize(core, edam_note)
        @core              = core
+       set_attributes(edam_note)
+    end
+
+    def set_attributes(edam_note)
+       @edam_note         = edam_note
 
        @guid              = edam_note.guid
        @title             = edam_note.title
+       @content           = edam_note.content # only getNote withContent: true
        @contentHash       = edam_note.contentHash
        @contentLength     = edam_note.contentLength
        @created           = Time.at(edam_note.created/1000)
@@ -37,16 +47,43 @@ module ENUtils
        @attributes        = edam_note.attributes
     end
 
+    def title=(val)
+      title_will_change! unless val == @title
+      @title = @edam_note.title = val
+    end
+
+    def content
+      @content ||= remote_content
+    end
+
+    def remote_content
+      @core.find_note(guid, with_content: true).content
+    end
+
+    def content=(val)
+      @content ||= @edam_note.content = remote_content
+      content_will_change! unless val == @content
+      @content = @edam_note.content = val
+    end
+
+    def save
+      return nil unless changed?
+      save_to_remote
+      set_attributes(@core.find_note(guid, with_content: content_changed?))
+      changes_applied
+      self
+    end
+
+    def save_to_remote
+      @edam_note.updated = Time.now.to_i * 1000
+      @core.notestore.updateNote(@core.token, @edam_note)
+    end
+
     def self.where(core, options={})
       offset = options.delete(:offset) || 0
       limit  = options.delete(:limit)  || DEFAULT_LIMIT
       result = core.notestore.findNotes(core.token, NoteFilter.build(core, options), offset, limit).notes.map{|n| new(core, n) }
       NoteList.new(core, result, options)
-    end
-
-    def set_content!
-      # getNote(token, guid, withContent, withResourcesData, withResourcesRecognition, withResourcesAlternateData)
-      @content ||= @core.notestore.getNote(@core.token, guid, true, false, false, false).content
     end
 
     def notebook
