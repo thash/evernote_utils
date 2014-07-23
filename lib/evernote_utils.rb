@@ -35,7 +35,17 @@ module ENUtils
     end
 
     def notes(options={})
-      Note.where(self, options)
+      Note.where(self, options.reverse_merge(order: :updated))
+    end
+
+    def find_note(guid, with_content: false,
+                        with_resources_data: false,
+                        with_resources_recognition: false,
+                        with_resources_alternate_data: false)
+      self.notestore.getNote(self.token, guid, with_content,
+                                               with_resources_data,
+                                               with_resources_recognition,
+                                               with_resources_alternate_data)
     end
 
     def notebook(name=nil)
