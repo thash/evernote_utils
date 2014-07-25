@@ -33,4 +33,21 @@ FactoryGirl.define do
     restrictions nil
   end
 
+  factory :notebook, class: ENUtils::Notebook do
+    core 'core'
+    edam_notebook { build(:edam_notebook) }
+    initialize_with { new(core, edam_notebook) }
+  end
+
+  factory :edam_tag, class: Evernote::EDAM::Type::Tag do
+    guid 'aaaaaaaaaaa'
+    name 'tagName'
+    updateSequenceNum 1234
+  end
+
+  factory :tag, class: ENUtils::Tag do
+    core 'core'
+    edam_tag { FactoryGirl.build(:edam_tag) }
+    initialize_with { new(core, edam_tag) }
+  end
 end
