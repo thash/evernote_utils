@@ -38,6 +38,8 @@ EvenoteUtils don't support authentication feature, because dominant other option
 
 ## Usage
 
+### get
+
 First, initialize ENUtils with an OAuth token credential identifier.
 
 ```ruby
@@ -115,6 +117,24 @@ tag      = enutils.tags(name: 'language').first
 enutils.notes(notebook: notebook, tag: tag, words: 'beginners\' guide')
 ```
 
+
+### update
+
+```ruby
+notebook = enutils.notebook('Inbox')
+tags = enutils.tags.take(2)
+
+# set ENUtils::Notebook instance or notebookGuid
+note.notebook = notebook
+# set ENUtils::Tag instances or tagGuids
+note.tags = tags
+
+note.title = 'some new title'
+
+note.save #=> save to Evernote Cloud
+````
+
 ## Planning to do
 
-* update notes
+* create note
+* `ENutils::Note#content` simple access
