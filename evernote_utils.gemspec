@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["takuya21hashimoto@gmail.com"]
   spec.description   = %q{A thin OOP-friendly wrapper of Evernote Ruby SDK.}
   spec.summary       = %q{A thin OOP-friendly wrapper of Evernote Ruby SDK.}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/memerelics/evernote_utils"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
