@@ -48,6 +48,10 @@ module ENUtils
                                                with_resources_alternate_data)
     end
 
+    def create_note(attrs)
+      Note.create(self, attrs)
+    end
+
     def notebook(name=nil)
       return nil unless name
       Notebook.find_by_name(self, name)

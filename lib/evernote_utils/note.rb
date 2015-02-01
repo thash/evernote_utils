@@ -33,6 +33,12 @@ module ENUtils
       NoteList.new(core, result, options)
     end
 
+    def self.create(core, attrs)
+      edam_note = Evernote::EDAM::Type::Note.new(parse_attrs(attrs))
+      res = core.notestore.createNote(core.token, edam_note)
+      new(core, res)
+    end
+
     def initialize(core, edam_note)
       @core      = core
       @edam_note = edam_note
@@ -90,6 +96,14 @@ module ENUtils
     private
     def remote_content
       @core.find_note(guid, with_content: true).content
+    end
+
+    def self.parse_attrs(attrs)
+      if notebook = attrs.delete(:notebook)
+        attrs[:notebookGuid] = notebook.guid if notebook.is_a? ENUtils::Notebook
+        attrs[:notebookGuid] = notebook if notebook.is_a? String
+      end
+      attrs
     end
   end
 end

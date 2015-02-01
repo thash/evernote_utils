@@ -118,7 +118,15 @@ enutils.notes(notebook: notebook, tag: tag, words: 'beginners\' guide')
 ```
 
 
-### update
+### create note
+
+```ruby
+enutils.create_note(title: 'create new note',
+                    notebook: enutils.notebook('Inbox'))
+```
+
+
+### update note
 
 ```ruby
 notebook = enutils.notebook('Inbox')
@@ -136,5 +144,4 @@ note.save #=> save to Evernote Cloud
 
 ## Planning to do
 
-* create note
 * `ENutils::Note#content` simple access
