@@ -123,6 +123,12 @@ enutils.notes(notebook: notebook, tag: tag, words: 'beginners\' guide')
 ```ruby
 enutils.create_note(title: 'create new note',
                     notebook: enutils.notebook('Inbox'))
+
+require 'opne-uri'
+enutils.create_note(title: 'Clip from website',
+                    notebook: enutils.notebook('Inbox'),
+                    content: open('https://github.com').read,
+                    from_html: true)
 ```
 
 

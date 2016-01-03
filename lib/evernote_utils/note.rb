@@ -1,5 +1,6 @@
 require 'active_support/core_ext/object'
 require 'evernote_utils/notelist'
+require 'roadie'
 
 module ENUtils
   class Note
@@ -35,7 +36,12 @@ module ENUtils
 
     def self.create(core, attrs)
       edam_note = Evernote::EDAM::Type::Note.new(parse_attrs(attrs))
-      res = core.notestore.createNote(core.token, edam_note)
+      begin
+        res = core.notestore.createNote(core.token, edam_note)
+      rescue Evernote::EDAM::Error::EDAMUserException
+        # build error message because $!.message is nil
+        raise $!.class, "[ErrorCode: #{$!.errorCode}] #{$!.parameter}", $!.backtrace
+      end
       new(core, res)
     end
 
@@ -103,7 +109,30 @@ module ENUtils
         attrs[:notebookGuid] = notebook.guid if notebook.is_a? ENUtils::Notebook
         attrs[:notebookGuid] = notebook if notebook.is_a? String
       end
+      attrs[:content] = html_to_enml(attrs[:content]) if attrs.delete(:from_html)
       attrs
+    end
+
+    def self.html_to_enml(html)
+      html = html.read if html.is_a?(File)
+      roadie_doc = ::Roadie::Document.new(html)
+      html_transformed = roadie_doc.transform
+      nokogiri_doc = Nokogiri::HTML(html_transformed)
+      # TODO: filter allowd attributes
+      nokogiri_doc.xpath('//@class').remove
+      # cannot use img+src
+      nokogiri_doc.xpath('//img').remove
+      inner = nokogiri_doc.css('body').inner_html
+      inner = inner.gsub('<br>', '<br/>')
+      wrap_enml(inner)
+    end
+
+    def self.wrap_enml(text)
+      '<?xml version="1.0" encoding="UTF-8"?>' +
+      '<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">' +
+      '<en-note>' +
+      text +
+      '</en-note>'
     end
   end
 end
