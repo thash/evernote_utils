@@ -146,7 +146,13 @@ note.tags = tags
 note.title = 'some new title'
 
 note.save #=> save to Evernote Cloud
-````
+```
+
+### crete tag
+
+```ruby
+enutils.create_tag(name: 'mytagname')
+```
 
 ## Planning to do
 

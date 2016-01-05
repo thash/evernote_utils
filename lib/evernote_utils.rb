@@ -61,6 +61,10 @@ module ENUtils
       Notebook.where(self, options)
     end
 
+    def create_tag(attrs)
+      Tag.create(self, attrs)
+    end
+
     def tag(name=nil)
       return nil unless name
       Tag.find_by_name(self, name)

@@ -14,6 +14,18 @@ module ENUtils
       @updateSequenceNum = edam_tag.updateSequenceNum
     end
 
+    # https://dev.evernote.com/doc/reference/NoteStore.html#Fn_NoteStore_createTag
+    def self.create(core, attrs)
+      edam_tag = Evernote::EDAM::Type::Tag.new(attrs)
+      begin
+        res = core.notestore.createTag(core.token, edam_tag)
+      rescue Evernote::EDAM::Error::EDAMUserException
+        # build error message because $!.message is nil
+        raise $!.class, "[ErrorCode: #{$!.errorCode}] #{$!.parameter}", $!.backtrace
+      end
+      new(core, res)
+    end
+
     def notes(options={})
       Note.where(@core, options.merge(tag: self))
     end

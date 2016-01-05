@@ -109,6 +109,15 @@ module ENUtils
         attrs[:notebookGuid] = notebook.guid if notebook.is_a? ENUtils::Notebook
         attrs[:notebookGuid] = notebook if notebook.is_a? String
       end
+      if tags = attrs.delete(:tags) || attrs.delete(:tag)
+        tags = [tags] unless tags.is_a? Array
+        attrs[:tagGuids] ||= []; attrs[:tagNames] ||= []
+        tags.each do |tag|
+          attrs[:tagGuids] << tag.guid if tag.is_a?(ENUtils::Tag)
+          attrs[:tagGuids] << tag if tag.is_a?(String) && tag.match(ENUtils::GUID_REGEXP)
+          attrs[:tagNames] << tag if tag.is_a?(String) && !tag.match(ENUtils::GUID_REGEXP)
+        end
+      end
       attrs[:content] = html_to_enml(attrs[:content]) if attrs.delete(:from_html)
       attrs
     end
