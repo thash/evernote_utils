@@ -34,9 +34,10 @@ module ENUtils
       @token = token
     end
 
-    def notes(options={})
+    def find_notes(options={})
       Note.where(self, options.reverse_merge(order: :updated))
     end
+    alias notes find_notes
 
     def find_note(guid, with_content: false,
                         with_resources_data: false,
@@ -47,31 +48,37 @@ module ENUtils
                                                with_resources_recognition,
                                                with_resources_alternate_data)
     end
+    alias note find_note
 
     def create_note(attrs)
       Note.create(self, attrs)
     end
 
-    def notebook(name=nil)
+    def find_notebook(name=nil)
       return nil unless name
       Notebook.find_by_name(self, name)
     end
+    alias notebook find_notebook
 
-    def notebooks(options={})
+    def find_notebooks(options={})
       Notebook.where(self, options)
     end
+    alias notebooks find_notebooks
 
     def create_tag(attrs)
       Tag.create(self, attrs)
     end
 
-    def tag(name=nil)
+    def find_tag(name=nil)
       return nil unless name
       Tag.find_by_name(self, name)
     end
+    alias tag find_tag
 
-    def tags(options={})
+    def find_tags(options={})
       Tag.where(self, options)
     end
+    alias tags find_tags
+
   end
 end
