@@ -45,6 +45,12 @@ module ENUtils
       new(core, res)
     end
 
+    def self.delete(core, guid)
+      core.notestore.deleteNote(core.token, guid)
+    rescue Evernote::EDAM::Error::EDAMUserException
+      raise $!.class, "[ErrorCode: #{$!.errorCode}] #{$!.parameter}", $!.backtrace
+    end
+
     def initialize(core, edam_note)
       @core      = core
       @edam_note = edam_note

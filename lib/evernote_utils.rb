@@ -54,6 +54,10 @@ module ENUtils
       Note.create(self, attrs)
     end
 
+    def delete_note(guid)
+      Note.delete(self, guid)
+    end
+
     def find_notebook(name=nil)
       return nil unless name
       Notebook.find_by_name(self, name)
